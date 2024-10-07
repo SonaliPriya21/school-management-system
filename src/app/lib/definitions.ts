@@ -2,7 +2,7 @@ import { z } from "zod";
 
 export const SignupFormSchema = z.object({
   name: z.string().min(3, "Must be 3 characters").trim(),
-  email: z.string().email({ message: "please enter a valid email." }).trim(),
+  email: z.string().email({ message: "Please enter a valid email." }).trim(),
   password: z
     .string()
     .min(8, { message: "Be at least 8 character long" })
@@ -14,7 +14,12 @@ export const SignupFormSchema = z.object({
     .trim(),
 });
 
-export type FormState =
+export const LoginFormSchema = z.object({
+  email: z.string().email({ message: "Please enter a valid email." }).trim(),
+  password: z.string().trim(),
+});
+
+export type SignupFormState =
   | {
       errors?: {
         name?: string[];
@@ -23,5 +28,21 @@ export type FormState =
       };
       message?: string;
     }
+  | {
+      errors?: string;
+    }
   | undefined;
 export type SessionPayload = { email: string; expiresAt: Date };
+
+export type LoginFormState =
+  | {
+      errors?: {
+        email?: string[];
+        password?: string[];
+      };
+      message?: string;
+    }
+  | {
+      errors?: string;
+    }
+  | undefined;

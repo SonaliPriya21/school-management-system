@@ -58,3 +58,8 @@ export async function updateSession() {
 export async function deleteSession() {
   cookies().delete("session");
 }
+export const parseSession = async () => {
+  const cookie = cookies().get("session");
+  const parsed = decrypt(cookie?.value);
+  return parsed;
+};

@@ -1,17 +1,18 @@
 "use server";
 
-import { SignupFormSchema, FormState } from "@/app/lib/definitions";
-import { hash } from "bcryptjs";
+import { SignupFormSchema, LoginFormSchema } from "@/app/lib/definitions";
+import { compare, hash } from "bcryptjs";
 import db from "../lib/prisma";
 import { createSession, deleteSession } from "../lib/session";
 import { redirect } from "next/navigation";
+import { z } from "zod";
 
-export async function signup(state: FormState, formData: FormData) {
+export async function signup(formData: z.infer<typeof SignupFormSchema>) {
   // Validate form fields
   const validatedFields = SignupFormSchema.safeParse({
-    name: formData.get("name"),
-    email: formData.get("email"),
-    password: formData.get("password"),
+    name: formData.name,
+    email: formData.email,
+    password: formData.password,
   });
 
   if (!validatedFields.success) {
@@ -21,6 +22,19 @@ export async function signup(state: FormState, formData: FormData) {
   }
 
   const { name, email, password } = validatedFields.data;
+
+  const dbUser = await db.user.findFirst({
+    where: {
+      email: email,
+    },
+  });
+
+  if (dbUser) {
+    return {
+      errors: "Already exists",
+    };
+  }
+
   const hashedPassword = await hash(password, 10);
   const data = await db.user.create({
     data: {
@@ -37,10 +51,45 @@ export async function signup(state: FormState, formData: FormData) {
   }
   await createSession(data.email);
   // 5. Redirect user
-  redirect("/profile");
+  redirect("/dashboard");
 }
 
 export async function logout() {
   deleteSession();
   redirect("/login");
+}
+
+export async function login(formData: z.infer<typeof LoginFormSchema>) {
+  // Validate form fields
+  const validatedFields = LoginFormSchema.safeParse({
+    email: formData.email,
+    password: formData.password,
+  });
+
+  if (!validatedFields.success) {
+    return {
+      errors: validatedFields.error.flatten().fieldErrors,
+    };
+  }
+
+  const data = await db.user.findFirst({
+    where: {
+      email: validatedFields.data.email,
+    },
+  });
+
+  if (!data) {
+    return {
+      errors: "User is not registered",
+    };
+  }
+
+  if (await compare(validatedFields.data.password, data.password)) {
+    await createSession(data.email);
+    redirect("/dashboard");
+  } else {
+    return {
+      errors: "Wrong password",
+    };
+  }
 }
