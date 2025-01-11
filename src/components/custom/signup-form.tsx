@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
-import { SignupFormSchema, SignupFormState } from "../lib/definitions";
+import { SignupFormSchema, SignupFormState } from "@/app/lib/definitions";
 import {
   Form,
   FormControl,
@@ -31,7 +31,6 @@ const SignupForm = () => {
 
   const onSubmit = async (values: z.infer<typeof SignupFormSchema>) => {
     const data = await signup(values);
-    console.log(data);
     setFormResponse(data);
   };
 
@@ -65,6 +64,24 @@ const SignupForm = () => {
                   type="email"
                   id="email"
                   placeholder="name@abcd.com"
+                  {...field}
+                />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        <FormField
+          control={form.control}
+          name="phone"
+          render={({ field }) => (
+            <FormItem className="w-full">
+              <FormLabel>Phone</FormLabel>
+              <FormControl>
+                <Input
+                  type="tel"
+                  id="phone"
+                  placeholder="1234567890"
                   {...field}
                 />
               </FormControl>

@@ -1,10 +1,9 @@
 import { Input } from "@/components/ui/input";
 import { PropsWithChildren } from "react";
-import { Button } from "@/components/ui/button";
-import { getUser } from "../actions/user";
+import { getUser } from "@/app/actions/user";
 import { redirect } from "next/navigation";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
-import { logout } from "../actions/auth";
+import { logout } from "@/app/actions/auth";
 import LogoutButton from "./LogoutButton";
 
 const Navbar = async ({ children }: PropsWithChildren) => {
@@ -26,7 +25,7 @@ const Navbar = async ({ children }: PropsWithChildren) => {
 
   return (
     <div>
-      <div className="w-full h-16 border-[1px] border-black border-solid flex items-center justify-between">
+      <div className="w-full h-16 border-b flex items-center justify-between">
         <Input className="mx-5 w-72" type="text" placeholder="Search" />
         <div className=" flex flex-row mx-5">
           <LogoutButton logout={logout} />

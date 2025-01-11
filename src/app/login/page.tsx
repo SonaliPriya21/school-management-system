@@ -1,4 +1,4 @@
-import LoginForm from "../(components)/loginform";
+import LoginForm from "@/components/custom/loginform";
 import Image from "next/image";
 import Link from "next/link";
 
@@ -9,7 +9,7 @@ const login = () => {
         <div className="w-1/2 border-[1px] border-black border-solid flex justify-center items-center ">
           <Image src="/logo.png" width={100} height={100} alt="logo" />
         </div>
-        <div className="w-1/2 bg-blue-50 px-5 flex flex-1 justify-center flex-col">
+        <div className="w-1/2 px-5 flex flex-1 justify-center flex-col">
           <h2 className="text-2xl text-center"> Welcome back</h2>
           <LoginForm />
           <p className="mt-5">

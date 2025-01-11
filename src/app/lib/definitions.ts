@@ -12,6 +12,7 @@ export const SignupFormSchema = z.object({
       message: "contain at least one special character.",
     })
     .trim(),
+  phone: z.string().min(10).max(10),
 });
 
 export const LoginFormSchema = z.object({

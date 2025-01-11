@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
-import { LoginFormSchema, LoginFormState } from "../lib/definitions";
+import { LoginFormSchema, LoginFormState } from "@/app/lib/definitions";
 import {
   Form,
   FormControl,

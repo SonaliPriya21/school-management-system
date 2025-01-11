@@ -1,0 +1,104 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mongodb"
+  url      = env("DATABASE_URL")
+}
+
+enum Subject {
+  Math
+  English
+  Hindi
+  Science
+  SocialStudy
+}
+
+enum Section {
+  A
+  B
+  C
+  D
+}
+
+enum Role {
+  Student
+  Teacher
+  Admin
+}
+
+model Class {
+  id             String    @id @default(auto()) @map("_id") @db.ObjectId
+  number         Int
+  capacity       Int
+  section        Section
+  classTeacher   User      @relation(name: "ClassTeacher", fields: [classTeacherId], references: [id], onUpdate: NoAction, onDelete: NoAction)
+  classTeacherId String    @db.ObjectId
+  Lessons        Lessons[]
+  Exam           Exam[]
+  students       User[]
+}
+
+enum Gender {
+  Male
+  Female
+}
+
+model User {
+  id         String    @id @default(auto()) @map("_id") @db.ObjectId
+  email      String
+  name       String
+  gender     Gender
+  password   String
+  detail     String?
+  bloodGroup String
+  hiredOn    DateTime
+  contact    String
+  subject    Subject?
+  address    String
+  rollNo     Int?
+  class      Class[]   @relation(name: "ClassTeacher")
+  role       Role
+  Lessons    Lessons[]
+  Exam       Exam[]
+  Result     Result[]
+  Class      Class?    @relation(fields: [classId], references: [id])
+  classId    String?   @db.ObjectId
+}
+
+model Lessons {
+  id      String  @id @default(auto()) @map("_id") @db.ObjectId
+  subject Subject
+  class   Class   @relation(fields: [classId], references: [id])
+  classId String  @db.ObjectId
+  teacher User    @relation(fields: [userId], references: [id])
+  userId  String  @db.ObjectId
+}
+
+model Exam {
+  id       String   @id @default(auto()) @map("_id") @db.ObjectId
+  subject  Subject
+  class    Class    @relation(fields: [classId], references: [id])
+  classId  String   @db.ObjectId
+  teacher  User     @relation(fields: [userId], references: [id])
+  userId   String   @db.ObjectId
+  examDate DateTime
+  Result   Result[]
+}
+
+model Result {
+  id   String @id @default(auto()) @map("_id") @db.ObjectId
+  exam Exam   @relation(fields: [examId], references: [id])
+
+  examId  String @db.ObjectId
+  student User   @relation(fields: [userId], references: [id])
+  userId  String @db.ObjectId
+  score   Int
+}

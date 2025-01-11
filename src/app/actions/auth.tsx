@@ -6,6 +6,7 @@ import db from "../lib/prisma";
 import { createSession, deleteSession } from "../lib/session";
 import { redirect } from "next/navigation";
 import { z } from "zod";
+import { Role } from "@prisma/client";
 
 export async function signup(formData: z.infer<typeof SignupFormSchema>) {
   // Validate form fields
@@ -13,6 +14,7 @@ export async function signup(formData: z.infer<typeof SignupFormSchema>) {
     name: formData.name,
     email: formData.email,
     password: formData.password,
+    phone: formData.phone,
   });
 
   if (!validatedFields.success) {
@@ -41,6 +43,8 @@ export async function signup(formData: z.infer<typeof SignupFormSchema>) {
       name,
       password: hashedPassword,
       email,
+      phone: "",
+      role: Role.Admin,
     },
   });
 
