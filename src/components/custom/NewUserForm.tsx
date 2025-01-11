@@ -65,7 +65,7 @@ const NewUserForm = ({ form }: Props) => {
         name="password"
         render={({ field }) => (
           <FormItem className="w-full">
-            <FormLabel>Password</FormLabel>
+            <FormLabel> Password</FormLabel>
             <FormControl>
               <Input
                 type="password"
