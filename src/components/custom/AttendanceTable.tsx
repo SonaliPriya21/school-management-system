@@ -1,10 +1,10 @@
 "use client";
 
+import { Attendance } from "@prisma/client";
 import { ColumnDef } from "@tanstack/react-table";
-import { Attendance, User } from "@prisma/client";
 import TableComponent from "./TableComponent";
 
-export const attendanceColumns: ColumnDef<User>[] = [
+export const attendanceColumns: ColumnDef<Attendance>[] = [
   {
     id: "class",
     accessorKey: "Class",

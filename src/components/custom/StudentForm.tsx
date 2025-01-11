@@ -5,7 +5,7 @@ import { AddStudentFormSchema } from "@/app/lib/student";
 import { Button } from "@/components/ui/button";
 import { Form } from "@/components/ui/form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Gender } from "@prisma/client";
+import { Gender, Role } from "@prisma/client";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import NewUserForm from "./NewUserForm";
@@ -22,6 +22,7 @@ const StudentForm = () => {
       bloodGroup: "",
       phone: "",
       address: "",
+      role: Role.Student,
     },
   });
 

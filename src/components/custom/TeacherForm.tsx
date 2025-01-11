@@ -11,7 +11,7 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Gender, Subject } from "@prisma/client";
+import { Gender, Role, Subject } from "@prisma/client";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import NewUserForm from "./NewUserForm";
@@ -38,6 +38,7 @@ const TeacherForm = () => {
       address: "",
       subject: Subject.Math,
       class: "",
+      role: Role.Teacher,
     },
   });
 

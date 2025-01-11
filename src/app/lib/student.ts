@@ -1,4 +1,4 @@
-import { Gender } from "@prisma/client";
+import { Gender, Role } from "@prisma/client";
 import { z } from "zod";
 
 export const AddStudentFormSchema = z.object({
@@ -24,6 +24,7 @@ export const AddStudentFormSchema = z.object({
     .min(10, "Please enter a valid phone number")
     .max(10, "Please enter a valid phone number"),
   address: z.string().min(1, "Please enter valid address"),
+  role: z.nativeEnum(Role),
 });
 
 export type AddStudentFormState =

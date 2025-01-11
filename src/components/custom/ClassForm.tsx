@@ -33,6 +33,7 @@ const ClassForm = () => {
   });
 
   const onSubmit = async (values: z.infer<typeof AddClassFormSchema>) => {
+    console.log(values);
     // await createUser(values);
   };
 

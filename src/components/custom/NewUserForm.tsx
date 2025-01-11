@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import {
   FormControl,
   FormField,
@@ -13,22 +14,12 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Gender, Subject } from "@prisma/client";
+import { Gender } from "@prisma/client";
 import { UseFormReturn } from "react-hook-form";
 
 interface Props {
   form: UseFormReturn<
-    {
-      email: string;
-      password: string;
-      name: string;
-      gender: "Male" | "Female";
-      detail: string;
-      bloodGroup: string;
-      phone: string;
-      address: string;
-      subject?: Subject;
-    },
+    any,
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     any,
     undefined

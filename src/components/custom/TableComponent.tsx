@@ -1,6 +1,6 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 import {
-  ColumnDef,
   flexRender,
   getCoreRowModel,
   getFilteredRowModel,
@@ -16,11 +16,10 @@ import {
   TableBody,
   TableCell,
 } from "@/components/ui/table";
-import { Attendance, Class, Exam, User } from "@prisma/client";
 
 type Props = {
-  data: Array<Class | User | Exam | Attendance>;
-  columns: ColumnDef<Class | User | Exam | Attendance>[];
+  data: any;
+  columns: any;
 };
 
 const TableComponent = ({ data, columns }: Props) => {
