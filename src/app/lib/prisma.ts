@@ -1,17 +1,18 @@
-/* eslint-disable */
+/* eslint-disable no-var */
+// lib/prisma.ts
+import { PrismaClient } from "@prisma/client/edge";
+import { withAccelerate } from "@prisma/extension-accelerate";
 
-import { PrismaClient } from "@prisma/client";
+const prismaClientSingleton = () => {
+  return new PrismaClient().$extends(withAccelerate());
+};
 
-let prisma: PrismaClient;
-
-if (process.env.NODE_ENV === "production") {
-  prisma = new PrismaClient();
-} else {
-  if (!(global as any).prisma) {
-    (global as any).prisma = new PrismaClient();
-  }
-  prisma = (global as any).prisma;
+declare global {
+  var prisma: undefined | ReturnType<typeof prismaClientSingleton>;
 }
 
-const db = prisma;
-export default db;
+const prisma = globalThis.prisma ?? prismaClientSingleton();
+
+export default prisma;
+
+if (process.env.NODE_ENV !== "production") globalThis.prisma = prisma;
