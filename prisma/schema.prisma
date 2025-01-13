@@ -46,20 +46,35 @@ enum Section {
 }
 
 model User {
-  id              String         @id @default(auto()) @map("_id") @db.ObjectId
-  name            String
-  email           String         @unique
-  gender          Gender?
-  bloodGroup      String?
-  address         String?
-  detail          String?
-  password        String
-  phone           String
-  role            Role
-  assignedClasses String[] // List of `Class` IDs for Teachers
-  createdAt       DateTime       @default(now())
-  updatedAt       DateTime       @updatedAt
-  studentClasses  StudentClass[] @relation("UserStudentClasses")
+  id                String              @id @default(auto()) @map("_id") @db.ObjectId
+  name              String
+  email             String              @unique
+  gender            Gender?
+  bloodGroup        String?
+  address           String?
+  detail            String?
+  password          String
+  phone             String
+  role              Role
+  subject           Subject? // Enum for subjects
+  assignedClasses   String[] // List of `Class` IDs for Teachers
+  createdAt         DateTime            @default(now())
+  updatedAt         DateTime            @updatedAt
+  studentClasses    StudentClass[]      @relation("UserStudentClasses")
+  school            School?             @relation("SchoolUsers", fields: [schoolId], references: [id])
+  schoolId          String?             @db.ObjectId
+  TeacherAssignment TeacherAssignment[]
+}
+
+model School {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  name      String
+  address   String
+  phone     String
+  email     String   @unique
+  users     User[]   @relation("SchoolUsers")
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
 
 model Class {
@@ -82,9 +97,9 @@ model StudentClass {
 model TeacherAssignment {
   id        String     @id @default(auto()) @map("_id") @db.ObjectId
   teacherId String     @db.ObjectId
-  subject   Subject // Enum for subjects
+  teacher   User       @relation(fields: [teacherId], references: [id])
   schedules Schedule[] @relation("TeacherAssignmentSchedules")
-  Class     Class?     @relation(fields: [classId], references: [id])
+  class     Class?     @relation(fields: [classId], references: [id])
   classId   String?    @db.ObjectId
 }
 

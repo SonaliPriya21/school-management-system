@@ -1,3 +1,5 @@
+"use server";
+
 import { Role } from "@prisma/client";
 import db from "../lib/prisma";
 

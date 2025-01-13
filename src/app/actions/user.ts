@@ -1,11 +1,39 @@
 "use server";
 
+import { AddUserFormSchema } from "@/app/lib/student";
+import { Role } from "@prisma/client";
+import { redirect } from "next/navigation";
 import { z } from "zod";
 import db from "../lib/prisma";
 import { parseSession } from "../lib/session";
-import { Role } from "@prisma/client";
-import { AddStudentFormSchema } from "@/app/lib/student";
-import { redirect } from "next/navigation";
+
+const utils = {
+  addUser: async (
+    user: z.infer<typeof AddUserFormSchema>,
+    role: Role,
+    schoolId: string
+  ) => {
+    if (!schoolId) {
+      return {
+        errors: "User must be linked to a school",
+      };
+    }
+
+    const validatedFields = AddUserFormSchema.safeParse(user);
+    if (!validatedFields.success) {
+      return {
+        errors: validatedFields.error.flatten().fieldErrors,
+      };
+    }
+    return await db.user.create({
+      data: {
+        ...user,
+        role,
+        schoolId,
+      },
+    });
+  },
+};
 
 export const getUser = async () => {
   const session = await parseSession();
@@ -25,21 +53,45 @@ export const getUser = async () => {
   return user;
 };
 
-export const createUser = async (
-  user: z.infer<typeof AddStudentFormSchema>
+export const createPrincipal = async (
+  user: z.infer<typeof AddUserFormSchema>,
+  schoolId: string
 ) => {
-  const validatedFields = AddStudentFormSchema.safeParse(user);
-  if (!validatedFields.success) {
-    return {
-      errors: validatedFields.error.flatten().fieldErrors,
-    };
+  await utils.addUser(user, Role.Principal, schoolId);
+  redirect("/users");
+};
+
+export const createTeacher = async (
+  user: z.infer<typeof AddUserFormSchema>,
+  schoolId: string,
+  classId?: string
+) => {
+  const savedUser = await utils.addUser(user, Role.Teacher, schoolId);
+  if (classId && "id" in savedUser) {
+    await db.teacherAssignment.create({
+      data: {
+        teacherId: savedUser.id,
+        classId,
+      },
+    });
   }
-  await db.user.create({
-    data: {
-      ...user,
-      role: Role.Student,
-    },
-  });
+  redirect("/teachers");
+};
+
+export const createStudent = async (
+  user: z.infer<typeof AddUserFormSchema>,
+  schoolId: string,
+  classId: string
+) => {
+  const savedUser = await utils.addUser(user, Role.Student, schoolId);
+  if ("id" in savedUser) {
+    await db.studentClass.create({
+      data: {
+        classId,
+        studentId: savedUser.id,
+      },
+    });
+  }
   redirect("/student");
 };
 

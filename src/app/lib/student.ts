@@ -1,7 +1,7 @@
 import { Gender, Role } from "@prisma/client";
 import { z } from "zod";
 
-export const AddStudentFormSchema = z.object({
+export const AddUserFormSchema = z.object({
   email: z.string().email({ message: "Please enter a valid email" }).trim(),
   password: z
     .string()

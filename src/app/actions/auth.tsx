@@ -1,6 +1,6 @@
 "use server";
 
-import { SignupFormSchema, LoginFormSchema } from "@/app/lib/definitions";
+import { SignUpFormSchema, LoginFormSchema } from "@/app/lib/definitions";
 import { compare, hash } from "bcryptjs";
 import db from "../lib/prisma";
 import { createSession, deleteSession } from "../lib/session";
@@ -8,13 +8,14 @@ import { redirect } from "next/navigation";
 import { z } from "zod";
 import { Role } from "@prisma/client";
 
-export async function signup(formData: z.infer<typeof SignupFormSchema>) {
+export async function signup(formData: z.infer<typeof SignUpFormSchema>) {
   // Validate form fields
-  const validatedFields = SignupFormSchema.safeParse({
+  const validatedFields = SignUpFormSchema.safeParse({
     name: formData.name,
     email: formData.email,
     password: formData.password,
     phone: formData.phone,
+    school: formData.school,
   });
 
   if (!validatedFields.success) {
@@ -23,7 +24,7 @@ export async function signup(formData: z.infer<typeof SignupFormSchema>) {
     };
   }
 
-  const { name, email, password } = validatedFields.data;
+  const { name, email, password, school } = validatedFields.data;
 
   const dbUser = await db.user.findFirst({
     where: {
@@ -37,6 +38,8 @@ export async function signup(formData: z.infer<typeof SignupFormSchema>) {
     };
   }
 
+  const savedSchool = await db.school.create({ data: school });
+
   const hashedPassword = await hash(password, 10);
   const data = await db.user.create({
     data: {
@@ -45,6 +48,7 @@ export async function signup(formData: z.infer<typeof SignupFormSchema>) {
       email,
       phone: "",
       role: Role.Admin,
+      schoolId: savedSchool.id,
     },
   });
 
@@ -53,7 +57,7 @@ export async function signup(formData: z.infer<typeof SignupFormSchema>) {
       message: "An error occured while creating your account.",
     };
   }
-  await createSession(data.email);
+  await createSession(data.email, "");
   // 5. Redirect user
   redirect("/dashboard");
 }
@@ -89,7 +93,7 @@ export async function login(formData: z.infer<typeof LoginFormSchema>) {
   }
 
   if (await compare(validatedFields.data.password, data.password)) {
-    await createSession(data.email);
+    await createSession(data.email, data.schoolId);
     redirect("/dashboard");
   } else {
     return {

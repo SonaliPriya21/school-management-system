@@ -1,6 +1,7 @@
 import { z } from "zod";
+import { SchoolFormSchema } from "./school";
 
-export const SignupFormSchema = z.object({
+export const SignupFormUserSchema = z.object({
   name: z.string().min(3, "Must be 3 characters").trim(),
   email: z.string().email({ message: "Please enter a valid email." }).trim(),
   password: z
@@ -13,6 +14,10 @@ export const SignupFormSchema = z.object({
     })
     .trim(),
   phone: z.string().min(10).max(10),
+});
+
+export const SignUpFormSchema = SignupFormUserSchema.extend({
+  school: SchoolFormSchema,
 });
 
 export const LoginFormSchema = z.object({
@@ -33,7 +38,11 @@ export type SignupFormState =
       errors?: string;
     }
   | undefined;
-export type SessionPayload = { email: string; expiresAt: Date };
+export type SessionPayload = {
+  email: string;
+  schoolId: string | null;
+  expiresAt: Date;
+};
 
 export type LoginFormState =
   | {

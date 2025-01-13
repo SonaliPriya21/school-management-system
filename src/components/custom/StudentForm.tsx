@@ -1,7 +1,7 @@
 "use client";
 
-import { createUser } from "@/app/actions/user";
-import { AddStudentFormSchema } from "@/app/lib/student";
+import { createStudent } from "@/app/actions/user";
+import { AddUserFormSchema } from "@/app/lib/student";
 import { Button } from "@/components/ui/button";
 import { Form } from "@/components/ui/form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -11,8 +11,8 @@ import { z } from "zod";
 import NewUserForm from "./NewUserForm";
 
 const StudentForm = () => {
-  const form = useForm<z.infer<typeof AddStudentFormSchema>>({
-    resolver: zodResolver(AddStudentFormSchema),
+  const form = useForm<z.infer<typeof AddUserFormSchema>>({
+    resolver: zodResolver(AddUserFormSchema),
     defaultValues: {
       name: "",
       email: "",
@@ -26,8 +26,8 @@ const StudentForm = () => {
     },
   });
 
-  const onSubmit = async (values: z.infer<typeof AddStudentFormSchema>) => {
-    await createUser(values);
+  const onSubmit = async (values: z.infer<typeof AddUserFormSchema>) => {
+    await createStudent(values, "", "");
   };
 
   return (
